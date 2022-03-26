@@ -6,8 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.pcsoft.framework.jrcp.api.providers.AnnotationProvider;
 import org.pcsoft.framework.jrcp.api.providers.ContentProvider;
 import org.pcsoft.framework.jrcp.commons.exceptions.JRCPConfigurationException;
+import org.pcsoft.framework.jrcp.core.providers.ApplicationJsonContentProvider;
+import org.pcsoft.framework.jrcp.core.providers.TextJsonContentProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class JRCPClientBuilder {
     private final List<Class<?>> apiInterfaceClasses = new ArrayList<>();
-    private final List<ContentProvider> contentProviders = new ArrayList<>();
+    private final List<ContentProvider<?>> contentProviders = new ArrayList<>();
 
     private AnnotationProvider annotationProvider;
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -56,8 +59,20 @@ public final class JRCPClientBuilder {
      * @param providers Providers to add
      * @return The builder itself (fluent API)
      */
-    public JRCPClientBuilder withContentProvider(ContentProvider... providers) {
+    public JRCPClientBuilder withContentProvider(ContentProvider<?>... providers) {
         contentProviders.addAll(List.of(providers));
+        return this;
+    }
+
+    /**
+     * Adds the standard builtin content providers.
+     * @return The builder itself (fluent API)
+     */
+    public JRCPClientBuilder withStandardContentProviders() {
+        contentProviders.addAll(Arrays.asList(
+                (ContentProvider<?>) ApplicationJsonContentProvider.INSTANCE,
+                (ContentProvider<?>) TextJsonContentProvider.INSTANCE
+        ));
         return this;
     }
 
