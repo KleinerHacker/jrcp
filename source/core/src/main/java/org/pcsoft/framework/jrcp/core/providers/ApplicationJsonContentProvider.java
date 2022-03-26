@@ -3,6 +3,9 @@ package org.pcsoft.framework.jrcp.core.providers;
 import org.pcsoft.framework.jrcp.api.providers.ContentProviderType;
 import org.pcsoft.framework.jrcp.commons.exceptions.JRCPSerializationException;
 
+/**
+ * Represent a content provider for content type application/json
+ */
 @ContentProviderType("application/json")
 public final class ApplicationJsonContentProvider extends JsonContentProvider {
     @Override

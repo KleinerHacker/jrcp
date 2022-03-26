@@ -12,9 +12,20 @@ import org.pcsoft.framework.jrcp.api.types.RestMethodInfo;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Utility class for HTTP request
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RequestUtils {
 
+    /**
+     * Creates a HTTP request based on method info with one of given content providers
+     * @param restMethodInfo Info about proxy method call
+     * @param uri URI to use as target
+     * @param contentProviders Configured content providers
+     * @return A HTTP request
+     * @throws UnsupportedEncodingException Is thrown by HTTP entity creation
+     */
     public static HttpUriRequest createRequest(RestMethodInfo restMethodInfo, String uri, ContentProvider[] contentProviders) throws UnsupportedEncodingException {
         final String buildUri = UriUtils.createUri(uri + "/" + restMethodInfo.getUriPath(), restMethodInfo.getPathParameters(), restMethodInfo.getQueryParameters());
 

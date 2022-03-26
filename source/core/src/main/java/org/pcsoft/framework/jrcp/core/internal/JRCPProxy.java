@@ -3,35 +3,36 @@ package org.pcsoft.framework.jrcp.core.internal;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.HeaderGroup;
-import org.pcsoft.framework.jrcp.commons.exceptions.JRCPConfigurationException;
-import org.pcsoft.framework.jrcp.commons.exceptions.JRCPExecutionException;
-import org.pcsoft.framework.jrcp.api.types.RestMethodInfo;
-import org.pcsoft.framework.jrcp.api.types.ValidationResult;
 import org.pcsoft.framework.jrcp.api.providers.AnnotationProvider;
 import org.pcsoft.framework.jrcp.api.providers.ContentProvider;
-import org.pcsoft.framework.jrcp.core.internal.utils.ContentProviderUtils;
-import org.pcsoft.framework.jrcp.core.internal.utils.EntityUtils;
+import org.pcsoft.framework.jrcp.api.types.ValidationResult;
+import org.pcsoft.framework.jrcp.commons.exceptions.JRCPConfigurationException;
+import org.pcsoft.framework.jrcp.commons.exceptions.JRCPExecutionException;
 import org.pcsoft.framework.jrcp.core.internal.utils.RequestUtils;
-import org.pcsoft.framework.jrcp.core.internal.utils.UriUtils;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+/**
+ * A class to create the JRCP Proxy objects
+ */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JRCPProxy {
+    /**
+     * Creates the proxy for the {@link org.pcsoft.framework.jrcp.core.JRCPClient}
+     *
+     * @param interfaceClass     API interface class to implement as proxy
+     * @param classLoader        Alternative class loader
+     * @param annotationProvider Provider for annotation reading on API interface class
+     * @param contentProviders   Providers to handle serialization of / from standard HTTP content types
+     * @param uri                The base URI from {@link  org.pcsoft.framework.jrcp.core.JRCPClient}
+     * @param <T>                Type of API interface class
+     * @return A proxy instance of implemented API interface
+     */
     @SuppressWarnings("unchecked")
     public static <T> T create(Class<T> interfaceClass, ClassLoader classLoader, AnnotationProvider annotationProvider, ContentProvider[] contentProviders,
                                String uri) {
