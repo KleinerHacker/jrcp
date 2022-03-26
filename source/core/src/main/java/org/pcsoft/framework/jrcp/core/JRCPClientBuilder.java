@@ -1,16 +1,18 @@
 package org.pcsoft.framework.jrcp.core;
 
 import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pcsoft.framework.jrcp.commons.exceptions.JRCPConfigurationException;
 import org.pcsoft.framework.jrcp.api.providers.AnnotationProvider;
 import org.pcsoft.framework.jrcp.api.providers.ContentProvider;
+import org.pcsoft.framework.jrcp.commons.exceptions.JRCPConfigurationException;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A builder to create a {@link  JRCPClient}
+ */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class JRCPClientBuilder {
@@ -21,29 +23,61 @@ public final class JRCPClientBuilder {
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
     private final String uri;
 
-    public JRCPClientBuilder withApiInterface(Class<?> apiInterfaceClass) {
-        if (!apiInterfaceClass.isInterface())
-            throw new JRCPConfigurationException("Class " + apiInterfaceClass.getName() + " is not an interface");
+    /**
+     * Adds one or more API interface classes. <b>Must be an interface</b>!
+     *
+     * @param apiInterfaceClasses API interface class to add
+     * @return The builder itself (fluent API)
+     */
+    public JRCPClientBuilder withApiInterface(Class<?>... apiInterfaceClasses) {
+        for (final var clazz : apiInterfaceClasses) {
+            if (!clazz.isInterface())
+                throw new JRCPConfigurationException("Class " + clazz.getName() + " is not an interface");
+        }
 
-        apiInterfaceClasses.add(apiInterfaceClass);
+        this.apiInterfaceClasses.addAll(List.of(apiInterfaceClasses));
         return this;
     }
 
+    /**
+     * Setup an annotation provider to use for annotation reading. <b>Must call one times</b>!
+     *
+     * @param provider Prvider to use
+     * @return The builder itself (fluent API)
+     */
     public JRCPClientBuilder withAnnotationProvider(AnnotationProvider provider) {
         annotationProvider = provider;
         return this;
     }
 
+    /**
+     * Adds one or more content provider instances to use for (de-)serialization of content body objects
+     *
+     * @param providers Providers to add
+     * @return The builder itself (fluent API)
+     */
     public JRCPClientBuilder withContentProvider(ContentProvider... providers) {
         contentProviders.addAll(List.of(providers));
         return this;
     }
 
+    /**
+     * Setup an alternative class loader. Default is the system class loader
+     *
+     * @param classLoader Class loader to use
+     * @return The builder itself (fluent API)
+     */
     public JRCPClientBuilder withClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
         return this;
     }
 
+    /**
+     * Build the JRCP client instance
+     *
+     * @return A JRCP client instance
+     * @throws JRCPConfigurationException Is thrown if builder required more data
+     */
     public JRCPClient build() {
         log.info("Build JRCP Client...");
 

@@ -9,8 +9,17 @@ import org.pcsoft.framework.jrcp.api.providers.ContentProvider;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represent a JRCP client implementation. To create an instance use {@link #createBuilder(String)} method.
+ */
 @Slf4j
 public final class JRCPClient {
+    /**
+     * Create a JRCP client based on given uri.
+     *
+     * @param uri The uri to use for this client. <b>Please note: This is a basic uri</b>. All other Uri parts will append to this uri.
+     * @return A builder to create a JRCP client
+     */
     public static JRCPClientBuilder createBuilder(String uri) {
         return new JRCPClientBuilder(uri);
     }
@@ -28,8 +37,16 @@ public final class JRCPClient {
         }
     }
 
+    /**
+     * Returns the proxy of the given API interface class
+     *
+     * @param clazz API interface class to search proxy for
+     * @param <T>   Type argument of type API interface
+     * @return The found proxy implementation of given API interface class
+     * @throws JRCPExecutionException Is thrown if no proxy class exists for the given API interface class.
+     */
     @SuppressWarnings("unchecked")
-    public <T>T getProxy(Class<T> clazz) {
+    public <T> T getProxy(Class<T> clazz) {
         if (!apiInterfaceProxies.containsKey(clazz))
             throw new JRCPExecutionException("Class " + clazz.getName() + " is not a registered API interface");
 

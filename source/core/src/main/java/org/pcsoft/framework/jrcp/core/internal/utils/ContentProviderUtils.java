@@ -10,9 +10,21 @@ import org.pcsoft.framework.jrcp.commons.exceptions.JRCPExecutionException;
 
 import java.util.Arrays;
 
+/**
+ * Utility class for content provider API
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ContentProviderUtils {
 
+    /**
+     * Find the fit content provider based on given produces
+     *
+     * @param providers Provider list to search in
+     * @param produces  Produces to search for
+     * @return The fir content provider for produces
+     * @throws JRCPAnnotationException Is thrown if content provider implementation is incorrect
+     * @throws JRCPExecutionException  Is thrown if no fit content provider was found for produces
+     */
     public static ContentProvider find(ContentProvider[] providers, String[] produces) {
         if (produces.length <= 0)
             throw new JRCPExecutionException("There are no produces values");
