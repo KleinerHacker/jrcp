@@ -19,4 +19,5 @@ public final class RestMethodInfo {
     private final String[] produces;
 
     private final Object body;
+    private final boolean hasResult;
 }

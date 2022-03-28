@@ -29,7 +29,7 @@ public final class EntityUtils {
      * @throws JRCPConfigurationException   Is thrown if provider implementation is wrong
      * @throws JRCPSerializationException   Is thrown if serialization with {@link  ContentProvider} fails
      */
-    public static HttpEntity createEntity(Object body, ContentProvider provider) throws UnsupportedEncodingException {
+    public static HttpEntity createEntity(Object body, ContentProvider<?> provider) throws UnsupportedEncodingException {
         if (provider instanceof StringContentProvider) {
             return new StringEntity(((StringContentProvider) provider).serialize(body));
         } else if (provider instanceof BinaryContentProvider) {

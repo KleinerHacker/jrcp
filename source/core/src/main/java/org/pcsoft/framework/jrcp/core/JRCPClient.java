@@ -1,6 +1,7 @@
 package org.pcsoft.framework.jrcp.core;
 
 import lombok.extern.slf4j.Slf4j;
+import org.pcsoft.framework.jrcp.api.providers.StatusProvider;
 import org.pcsoft.framework.jrcp.commons.exceptions.JRCPExecutionException;
 import org.pcsoft.framework.jrcp.core.internal.JRCPProxy;
 import org.pcsoft.framework.jrcp.api.providers.AnnotationProvider;
@@ -26,13 +27,14 @@ public final class JRCPClient {
 
     private final Map<Class<?>, Object> apiInterfaceProxies = new HashMap<>();
 
-    JRCPClient(Class<?>[] apiInterfaceClasses, ContentProvider[] contentProviders, AnnotationProvider annotationProvider, ClassLoader classLoader, String uri) {
+    JRCPClient(Class<?>[] apiInterfaceClasses, ContentProvider<?>[] contentProviders, AnnotationProvider annotationProvider, StatusProvider statusProvider,
+               ClassLoader classLoader, String uri) {
         log.info("Create JRCP Client");
 
         for (final var clazz : apiInterfaceClasses) {
             log.debug("Handle API interface " + clazz.getName());
 
-            final Object proxy = JRCPProxy.create(clazz, classLoader, annotationProvider, contentProviders, uri);
+            final Object proxy = JRCPProxy.create(clazz, classLoader, annotationProvider, contentProviders, statusProvider, uri);
             apiInterfaceProxies.put(clazz, proxy);
         }
     }

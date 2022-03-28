@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pcsoft.framework.jrcp.api.providers.AnnotationProvider;
 import org.pcsoft.framework.jrcp.api.providers.ContentProvider;
+import org.pcsoft.framework.jrcp.api.providers.StatusProvider;
 import org.pcsoft.framework.jrcp.commons.exceptions.JRCPConfigurationException;
-import org.pcsoft.framework.jrcp.core.providers.ApplicationJsonContentProvider;
-import org.pcsoft.framework.jrcp.core.providers.TextJsonContentProvider;
+import org.pcsoft.framework.jrcp.core.providers.content.ApplicationJsonContentProvider;
+import org.pcsoft.framework.jrcp.core.providers.content.TextJsonContentProvider;
+import org.pcsoft.framework.jrcp.core.providers.status.DefaultStatusProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +25,9 @@ public final class JRCPClientBuilder {
     private final List<ContentProvider<?>> contentProviders = new ArrayList<>();
 
     private AnnotationProvider annotationProvider;
+    private StatusProvider statusProvider = DefaultStatusProvider.INSTANCE;
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
     private final String uri;
 
     /**
@@ -77,6 +81,17 @@ public final class JRCPClientBuilder {
     }
 
     /**
+     * Setup a status provider to use for HTTP error handling. Normally it use {@link DefaultStatusProvider} implementation.
+     *
+     * @param statusProvider Status provider to use
+     * @return The builder itself (fluent API)
+     */
+    public JRCPClientBuilder withStatusProvider(StatusProvider statusProvider) {
+        this.statusProvider = statusProvider;
+        return this;
+    }
+
+    /**
      * Setup an alternative class loader. Default is the system class loader
      *
      * @param classLoader Class loader to use
@@ -107,6 +122,7 @@ public final class JRCPClientBuilder {
                 apiInterfaceClasses.toArray(new Class[0]),
                 contentProviders.toArray(new ContentProvider[0]),
                 annotationProvider,
+                statusProvider,
                 classLoader,
                 uri);
     }

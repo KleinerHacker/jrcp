@@ -17,20 +17,20 @@ import java.util.Arrays;
 public final class ContentProviderUtils {
 
     /**
-     * Find the fit content provider based on given produces
+     * Find the fit content provider based on given contentTypes
      *
      * @param providers Provider list to search in
-     * @param produces  Produces to search for
-     * @return The fir content provider for produces
+     * @param contentTypes  Produces to search for
+     * @return The fir content provider for contentTypes
      * @throws JRCPAnnotationException Is thrown if content provider implementation is incorrect
-     * @throws JRCPExecutionException  Is thrown if no fit content provider was found for produces
+     * @throws JRCPExecutionException  Is thrown if no fit content provider was found for contentTypes
      */
-    public static ContentProvider find(ContentProvider[] providers, String[] produces) {
-        if (produces.length <= 0)
-            throw new JRCPExecutionException("There are no produces values");
+    public static ContentProvider<?> find(ContentProvider<?>[] providers, String[] contentTypes) {
+        if (contentTypes.length <= 0)
+            throw new JRCPExecutionException("There are no contentTypes values");
 
-        //FEATURE: multiple produces?
-        final var value = produces[0];
+        //FEATURE: multiple contentTypes?
+        final var value = contentTypes[0];
 
         final var contentProvider = Arrays.stream(providers)
                 .filter(x -> {

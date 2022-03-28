@@ -3,10 +3,7 @@ package org.pcsoft.framework.jrcp.core.internal.utils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.pcsoft.framework.jrcp.api.providers.ContentProvider;
 import org.pcsoft.framework.jrcp.api.types.RestMethodInfo;
 
@@ -26,7 +23,7 @@ public final class RequestUtils {
      * @return A HTTP request
      * @throws UnsupportedEncodingException Is thrown by HTTP entity creation
      */
-    public static HttpUriRequest createRequest(RestMethodInfo restMethodInfo, String uri, ContentProvider[] contentProviders) throws UnsupportedEncodingException {
+    public static HttpUriRequest createRequest(RestMethodInfo restMethodInfo, String uri, ContentProvider<?>[] contentProviders) throws UnsupportedEncodingException {
         final String buildUri = UriUtils.createUri(uri + "/" + restMethodInfo.getUriPath(), restMethodInfo.getPathParameters(), restMethodInfo.getQueryParameters());
 
         final HttpUriRequest request;
@@ -40,6 +37,21 @@ public final class RequestUtils {
             case POST:
                 request = createPost(restMethodInfo, contentProviders, buildUri);
                 break;
+            case DELETE:
+                request = createDelete(buildUri);
+                break;
+            case HEAD:
+                request = createHead(buildUri);
+                break;
+            case OPTIONS:
+                request = createOptions(buildUri);
+                break;
+            case PATCH:
+                request = createPatch(restMethodInfo, contentProviders, buildUri);
+                break;
+            case TRACE:
+                request = createTrace(buildUri);
+                break;
             default:
                 throw new NotImplementedException("Unknown HTTP method: " + restMethodInfo.getType().name());
         }
@@ -49,35 +61,54 @@ public final class RequestUtils {
             request.addHeader("accept", restMethodInfo.getConsumes()[0]);
         }
 
-        return null; //TODO
+        return request;
     }
 
-    private static HttpUriRequest createPost(RestMethodInfo restMethodInfo, ContentProvider[] contentProviders, String buildUri) throws UnsupportedEncodingException {
-        final HttpUriRequest request;
+    private static HttpUriRequest createPost(RestMethodInfo restMethodInfo, ContentProvider<?>[] contentProviders, String buildUri) throws UnsupportedEncodingException {
         final var httpPost = new HttpPost(buildUri);
         final var provider = ContentProviderUtils.find(contentProviders, restMethodInfo.getProduces());
         final var entity = EntityUtils.createEntity(restMethodInfo.getBody(), provider);
         httpPost.setEntity(entity);
 
-        request = httpPost;
-        return request;
+        return httpPost;
     }
 
-    private static HttpUriRequest createPut(RestMethodInfo restMethodInfo, ContentProvider[] contentProviders, String buildUri) throws UnsupportedEncodingException {
-        final HttpUriRequest request;
+    private static HttpUriRequest createPut(RestMethodInfo restMethodInfo, ContentProvider<?>[] contentProviders, String buildUri) throws UnsupportedEncodingException {
         final var httpPut = new HttpPut(buildUri);
         final var provider = ContentProviderUtils.find(contentProviders, restMethodInfo.getProduces());
         final var entity = EntityUtils.createEntity(restMethodInfo.getBody(), provider);
         httpPut.setEntity(entity);
 
-        request = httpPut;
-        return request;
+        return httpPut;
     }
 
     private static HttpUriRequest createGet(String buildUri) {
-        final HttpUriRequest request;
-        request = new HttpGet(buildUri);
-        return request;
+        return new HttpGet(buildUri);
+    }
+
+    private static HttpUriRequest createDelete(String buildUri) {
+        return new HttpDelete(buildUri);
+    }
+
+    private static HttpUriRequest createPatch(RestMethodInfo restMethodInfo, ContentProvider<?>[] contentProviders, String buildUri) throws UnsupportedEncodingException {
+        final var httpPatch = new HttpPatch(buildUri);
+        final var provider = ContentProviderUtils.find(contentProviders, restMethodInfo.getProduces());
+        final var entity = EntityUtils.createEntity(restMethodInfo.getBody(), provider);
+        httpPatch.setEntity(entity);
+
+        return httpPatch;
+    }
+
+    private static HttpUriRequest createHead(String buildUri) {
+        return new HttpHead(buildUri);
+    }
+
+    private static HttpUriRequest createOptions(String buildUri) {
+        return new HttpOptions(buildUri);
+    }
+
+    private static HttpUriRequest createTrace(String buildUri) {
+        return new HttpTrace(buildUri);
     }
 
 }
