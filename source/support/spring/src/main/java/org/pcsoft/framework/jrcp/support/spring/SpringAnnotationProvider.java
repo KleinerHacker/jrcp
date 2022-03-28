@@ -1,5 +1,7 @@
 package org.pcsoft.framework.jrcp.support.spring;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.pcsoft.framework.jrcp.api.providers.AnnotationProvider;
 import org.pcsoft.framework.jrcp.api.types.RestMethodInfo;
 import org.pcsoft.framework.jrcp.api.types.ValidationResult;
@@ -12,7 +14,10 @@ import java.lang.reflect.Method;
 /**
  * Implementation of an annotation provider to use annotations of spring
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SpringAnnotationProvider implements AnnotationProvider {
+    public static final SpringAnnotationProvider INSTANCE = new SpringAnnotationProvider();
+
     @Override
     public ValidationResult isApiInterfaceValid(Class<?> clazz) {
         return clazz.getAnnotation(RestController.class) != null ? ValidationResult.createPositive() :
@@ -35,7 +40,7 @@ public final class SpringAnnotationProvider implements AnnotationProvider {
         else if (method.getAnnotation(RequestMapping.class) != null)
             requestMethod = method.getAnnotation(RequestMapping.class).method()[0];
         else
-            throw new JRCPExecutionException("Unable to find any valid REST annotation on method " + method);
+            return null;
 
         return RestMethodUtils.buildRestMethodInfo(requestMethod, method, args);
     }

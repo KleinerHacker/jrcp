@@ -2,6 +2,7 @@ package org.pcsoft.framework.jrcp.support.spring.utils;
 
 import lombok.*;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.pcsoft.framework.jrcp.api.types.RestMethodInfo;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,10 +45,16 @@ public final class RestMethodUtils {
         final var parameterInfoList = toParameterInfo(method.getParameters(), args);
         final var pathParams = Arrays.stream(parameterInfoList)
                 .filter(x -> x.getParameter().getAnnotation(PathVariable.class) != null)
-                .collect(Collectors.toMap(x -> x.getParameter().getAnnotation(PathVariable.class).value(), ParameterInfo::getValue));
+                .collect(Collectors.toMap(
+                        x -> StringUtils.defaultString(x.getParameter().getAnnotation(PathVariable.class).value(), x.getParameter().getName()),
+                        ParameterInfo::getValue
+                ));
         final var queryParams = Arrays.stream(parameterInfoList)
                 .filter(x -> x.getParameter().getAnnotation(RequestParam.class) != null)
-                .collect(Collectors.toMap(x -> x.getParameter().getAnnotation(RequestParam.class).value(), ParameterInfo::getValue));
+                .collect(Collectors.toMap(
+                        x -> StringUtils.defaultString(x.getParameter().getAnnotation(RequestParam.class).value(), x.getParameter().getName()),
+                        ParameterInfo::getValue
+                ));
         final var bodyValue = Arrays.stream(parameterInfoList)
                 .filter(x -> x.getParameter().getAnnotation(RequestBody.class) != null)
                 .findFirst().map(ParameterInfo::getValue).orElse(null);

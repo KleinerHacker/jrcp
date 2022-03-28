@@ -15,6 +15,8 @@ import org.pcsoft.framework.jrcp.core.internal.utils.ResponseUtils;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -59,11 +61,12 @@ public final class JRCPProxy {
 
             try {
                 log.debug("Invoke method " + method + " as default from interface");
+
                 return MethodHandles.lookup()
                         .in(method.getDeclaringClass())
                         .unreflectSpecial(method, method.getDeclaringClass())
                         .bindTo(proxy)
-                        .invoke(args);
+                        .invokeWithArguments(args);
             } catch (Throwable e) {
                 throw new JRCPExecutionException("Unable to invoke default method " + method, e);
             }
